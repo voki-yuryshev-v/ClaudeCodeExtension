@@ -125,9 +125,6 @@ namespace ClaudeCodeVS
                 LoadSettings();
                 ApplyLoadedSettings();
 
-                // Restore cached usage snapshot and start background scrape
-                InitializeUsageMonitoring();
-
                 // Subscribe to VS build events for the opt-in "auto-send build errors" feature.
                 InitializeBuildErrorAutoSend();
 

@@ -1093,9 +1093,6 @@ namespace ClaudeCodeVS
             // Update effort selection
             UpdateEffortSelection();
 
-            // Color the inline usage bars to match the current theme
-            UpdateInlineUsageBarColors();
-
             // Show the custom-commands toolbar button when entries are configured
             RefreshCustomCommandsButton();
 

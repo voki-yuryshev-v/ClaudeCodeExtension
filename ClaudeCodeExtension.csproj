@@ -103,7 +103,6 @@
     <Compile Include="Controls\ClaudeCodeControl.Terminal.cs" />
     <Compile Include="Controls\ClaudeCodeControl.TerminalIO.cs" />
     <Compile Include="Controls\ClaudeCodeControl.Theme.cs" />
-    <Compile Include="Controls\ClaudeCodeControl.Usage.cs" />
     <Compile Include="Controls\ClaudeCodeControl.UserInput.cs" />
     <Compile Include="Controls\ClaudeCodeControl.Workspace.cs" />
     <Compile Include="Controls\ClaudeCodeControl.NativeMode.cs" />
@@ -120,10 +119,6 @@
       <DependentUpon>ChatTranscriptView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolWindows\ClaudeCodeToolWindow.cs" />
-    <Compile Include="UI\ClaudeUsageControl.xaml.cs">
-      <DependentUpon>ClaudeUsageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ToolWindows\ClaudeUsageToolWindow.cs" />
     <Compile Include="ToolWindows\DetachedTerminalToolWindow.cs" />
     <Compile Include="ToolWindows\NativeChatToolWindow.cs" />
     <Compile Include="ToolWindows\DiffViewerToolWindow.cs" />
@@ -178,7 +173,6 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="DiffPlex" Version="1.9.0" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4078.44" />
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="ClaudeCodeExtensionPackage.vsct">
@@ -194,10 +188,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\ChatTranscriptView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\ClaudeUsageControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

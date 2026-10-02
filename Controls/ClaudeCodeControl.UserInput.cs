@@ -412,9 +412,6 @@ namespace ClaudeCodeVS
             _historyIndex = -1;
             _tempCurrentText = string.Empty;
 
-            // Refresh inline usage bars (throttled internally)
-            _ = RefreshInlineUsageAsync();
-
             // Arm the "On Agent Finish" watcher (Claude Code only; no-op when disabled).
             // Skipped in native mode: there the turn ends on an explicit protocol event, so the whole
             // AttachConsole/idle-heuristic machinery would only produce false positives.

@@ -342,17 +342,6 @@
                             Visibility="Collapsed"
                             Margin="0,0,6,0"/>
 
-						<Button x:Name="ShowUsageToolbarButton"
-                            Content="📊"
-                            Width="30"
-                            MinWidth="30"
-                            FontSize="14"
-                            Style="{StaticResource IconButtonStyle}"
-                            Click="ShowUsageViewMenuItem_Click"
-                            ToolTip="Show Usage"
-                            Visibility="Collapsed"
-                            Margin="0,0,6,0"/>
-
 						<Button x:Name="SetWorkingDirectoryToolbarButton"
                             Content="📁"
                             Width="30"
@@ -472,7 +461,6 @@
 									<MenuItem Header="⧉  Detach Terminal to Separate Tab" x:Name="DetachTerminalMenuItem" Click="DetachTerminalButton_Click"/>
 									<MenuItem Header="📄  View Code Changes" x:Name="ViewChangesMenuItem" Click="ViewChangesButton_Click"/>
 									<MenuItem Header="📜  Session History" x:Name="SessionHistoryViewMenuItem" Click="SessionHistoryButton_Click" Visibility="Collapsed"/>
-									<MenuItem Header="📊  Show Usage" x:Name="ShowUsageViewMenuItem" Click="ShowUsageViewMenuItem_Click" IsCheckable="True" Visibility="Collapsed"/>
 									<MenuItem Header="📁  Set Working Directory..." x:Name="SetWorkingDirectoryMenuItem" Click="SetWorkingDirectoryMenuItem_Click" ToolTip="Set a custom working directory (absolute or relative to solution). Leave empty for default behavior."/>
 									<MenuItem Header="🛠️  Send Build Errors to Agent" x:Name="SendBuildErrorsMenuItem" Click="SendBuildErrorsButton_Click" ToolTip="Collect the current build errors and send them to the agent to fix, regardless of the auto-send setting."/>
 									<MenuItem Header="📝  Generate Commit Message" x:Name="GenerateCommitMessageMenuItem" Click="GenerateCommitMessageButton_Click" ToolTip="Ask the agent to write a commit message from the current git diff and fill it into the Git Changes window."/>
@@ -614,93 +602,6 @@
 				</ScrollViewer>
 			</Grid>
 
-			<!-- Inline Claude usage mini-bars (session + weekly). Hidden until first
-			     successful scrape. Click any row to open the full usage tool window. -->
-			<Border x:Name="InlineUsagePanel" Grid.Row="3" Margin="0,4,0,2"
-			        Padding="6,5"
-			        BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBorderKey}}"
-			        BorderThickness="1"
-			        CornerRadius="3"
-			        Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}"
-			        Cursor="Hand"
-			        Visibility="Collapsed"
-			        ToolTip="Click to open the full Claude usage view"
-			        MouseLeftButtonUp="InlineUsagePanel_Click">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" MinWidth="100"/>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="Auto"/>
-					</Grid.ColumnDefinitions>
-
-					<!-- Session row -->
-					<StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,8,0">
-						<TextBlock x:Name="InlineSessionLabel" Text="Sessão atual"
-						           FontSize="11" Opacity="0.95"
-						           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-						<TextBlock x:Name="InlineSessionReset" Text=""
-						           FontSize="10" Opacity="0.65"
-						           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-					</StackPanel>
-					<ProgressBar x:Name="InlineSessionBar" Grid.Row="0" Grid.Column="1"
-					             Height="8" Minimum="0" Maximum="100" Value="0"
-					             Foreground="#3886E5" Background="#2A2A2A" BorderBrush="#606060" BorderThickness="1"
-					             VerticalAlignment="Center"/>
-					<TextBlock x:Name="InlineSessionPct" Grid.Row="0" Grid.Column="2"
-					           Text="0%" FontSize="11" Margin="8,0,0,0"
-					           VerticalAlignment="Center" MinWidth="36" TextAlignment="Right"
-					           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-
-					<!-- Weekly limit row (hidden for spend-limit-only accounts, issue #182) -->
-					<StackPanel x:Name="InlineWeeklyStack" Grid.Row="1" Grid.Column="0" Margin="0,4,8,0">
-						<TextBlock x:Name="InlineWeeklyLabel" Text="Weekly limit"
-						           FontSize="11" Opacity="0.95"
-						           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-						<TextBlock x:Name="InlineWeeklyReset" Text=""
-						           FontSize="10" Opacity="0.65"
-						           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-					</StackPanel>
-					<ProgressBar x:Name="InlineWeeklyBar" Grid.Row="1" Grid.Column="1"
-					             Height="8" Minimum="0" Maximum="100" Value="0"
-					             Foreground="#3886E5" Background="#2A2A2A" BorderBrush="#606060" BorderThickness="1"
-					             Margin="0,4,0,0" VerticalAlignment="Center"/>
-					<TextBlock x:Name="InlineWeeklyPct" Grid.Row="1" Grid.Column="2"
-					           Text="0%" FontSize="11" Margin="8,4,0,0"
-					           VerticalAlignment="Center" MinWidth="36" TextAlignment="Right"
-					           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-					<!-- Extra usage row (hidden until extra-usage is active) -->
-					<StackPanel x:Name="InlineExtraUsageStack" Grid.Row="2" Grid.Column="0" Margin="0,4,8,0" Visibility="Collapsed">
-						<TextBlock x:Name="InlineExtraUsageSpent" Text="Extra usage"
-						           FontSize="11" Opacity="0.95"
-						           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-						<TextBlock x:Name="InlineExtraUsageReset" Text=""
-						           FontSize="10" Opacity="0.65"
-						           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"/>
-					</StackPanel>
-					<ProgressBar x:Name="InlineExtraUsageBar" Grid.Row="2" Grid.Column="1"
-					             Height="8" Minimum="0" Maximum="100" Value="0"
-					             Foreground="#3886E5" Background="#2A2A2A" BorderBrush="#606060" BorderThickness="1"
-					             Margin="0,4,0,0" VerticalAlignment="Center"
-					             Visibility="Collapsed"/>
-					<TextBlock x:Name="InlineExtraUsagePct" Grid.Row="2" Grid.Column="2"
-					           Text="0%" FontSize="11" Margin="8,4,0,0"
-					           VerticalAlignment="Center" MinWidth="36" TextAlignment="Right"
-					           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"
-					           Visibility="Collapsed"/>
-					<!-- Stale-data notice (issue #182): shown when the bars could not be refreshed for a while -->
-					<TextBlock x:Name="InlineUsageStaleNotice" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
-					           Text="" FontSize="10" Opacity="0.75" FontStyle="Italic" Margin="0,4,0,0"
-					           TextTrimming="CharacterEllipsis"
-					           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"
-					           Visibility="Collapsed"/>
-				</Grid>
-			</Border>
 		</Grid>
 
 		<!-- Resizable Splitter -->

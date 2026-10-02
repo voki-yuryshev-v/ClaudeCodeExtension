@@ -3774,12 +3774,8 @@ namespace ClaudeCodeVS
 
             ClaudeModel selected = _settings != null ? _settings.SelectedClaudeModel : ClaudeModel.Sonnet;
 
-            // Fable needs usage credits — left out on a zero balance unless it is the current pick.
-            if (selected == ClaudeModel.Fable || IsFableModelOffered())
-            {
-                AddComposerMenuItem(menu, "Fable", selected == ClaudeModel.Fable,
-                    delegate { ThreadHelper.ThrowIfNotOnUIThread(); OnChatClaudeModelSelected(ClaudeModel.Fable); });
-            }
+            AddComposerMenuItem(menu, "Fable", selected == ClaudeModel.Fable,
+                delegate { ThreadHelper.ThrowIfNotOnUIThread(); OnChatClaudeModelSelected(ClaudeModel.Fable); });
             AddComposerMenuItem(menu, "Opus", selected == ClaudeModel.Opus,
                 delegate { ThreadHelper.ThrowIfNotOnUIThread(); OnChatClaudeModelSelected(ClaudeModel.Opus); });
             AddComposerMenuItem(menu, "Sonnet", selected == ClaudeModel.Sonnet,
@@ -3807,11 +3803,8 @@ namespace ClaudeCodeVS
 
             ClaudeModel selected = session.SelectedClaudeModel;
 
-            if (selected == ClaudeModel.Fable || IsFableModelOffered())
-            {
-                AddComposerMenuItem(menu, "Fable", selected == ClaudeModel.Fable,
-                    delegate { ThreadHelper.ThrowIfNotOnUIThread(); OnChatClaudeModelSelectedForSession(session, ClaudeModel.Fable); });
-            }
+            AddComposerMenuItem(menu, "Fable", selected == ClaudeModel.Fable,
+                delegate { ThreadHelper.ThrowIfNotOnUIThread(); OnChatClaudeModelSelectedForSession(session, ClaudeModel.Fable); });
             AddComposerMenuItem(menu, "Opus", selected == ClaudeModel.Opus,
                 delegate { ThreadHelper.ThrowIfNotOnUIThread(); OnChatClaudeModelSelectedForSession(session, ClaudeModel.Opus); });
             AddComposerMenuItem(menu, "Sonnet", selected == ClaudeModel.Sonnet,
@@ -5744,9 +5737,6 @@ namespace ClaudeCodeVS
                 }
 
                 bool isWsl = activeProvider == AiProvider.ClaudeCodeWSL;
-
-                // Sign out the embedded usage WebView2 so the new account is picked up there too.
-                await SignOutUsageWindowIfActiveAsync();
 
                 // Clear the CLI's local "signed in as" record before relaunching — otherwise the
                 // relaunch below reads the same still-there oauthAccount and reports a successful

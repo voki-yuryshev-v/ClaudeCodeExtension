@@ -22,7 +22,6 @@ Enjoying the extension? [Buy me a coffee](https://www.buymeacoffee.com/dliedke) 
 - **Integrated diff viewer** — For Git projects, the 📊 view shows uncommitted changes in a dedicated tab with search, double-click-to-open, and double-click-line-to-navigate. Optionally auto-opens when you send a prompt.
 - **Prompt history** — Last 50 prompts saved (with attached files). Browse with **Ctrl+Up / Ctrl+Down**; clear via right-click.
 - **Claude Code and Codex session history** — 📜 toolbar button lists past sessions for the current workspace; view, rename, delete, or resume any session, including the most recent one. Works on Windows and WSL.
-- **Claude usage in VS** — 📊 button (when Claude is active) opens the claude.ai usage page inside a dockable tab. Inline session/weekly progress bars below the prompt update automatically and adapt to the active theme.
 - **Custom commands (⚡)** — Save slash commands or canned prompts and dispatch them to the active agent in one click. Configure via *⚙ → Configure Custom Commands...*.
 - **"@" file picker** — Type **@** in the prompt box (or the native mode chat composer) to search your solution's files and folders and insert one with the keyboard; keep typing to filter, arrow keys + Enter to insert, pick a folder to drill in. File types and skipped folders are configurable in Settings → Behavior.
 - **On Agent Finish** — Optionally play a sound, show a notification (with duration, plus token count for Claude Code), and run an action (build/rebuild, run, tests, a script, or a follow-up command) when the agent goes idle. Global defaults plus per-solution overrides. Configure via *⚙ → Settings...*.
@@ -107,9 +106,9 @@ Then choose it via *⚙ → Set Terminal Type...*.
 - Pick an AI provider, *Configure Visible Code Agents...*
 - Provider-specific flags: Claude *Skip Permissions*, Codex *Approval Never*, Cursor *Yolo Mode*, Devin *Dangerous Mode*, Antigravity *Skip Permissions*
 - *Configure Custom Commands...*, *Settings...*, About
-- *Settings...* opens the consolidated dialog with tabs for Behavior (send key, large prompts, auto-open Changes, pull before sending, auto-send build errors, font size), Layout (prompt panel position), Terminal type, Theme, Usage, Toolbar, CLI Paths, and Backup (save/load all settings to a file)
+- *Settings...* opens the consolidated dialog with tabs for Behavior (send key, large prompts, auto-open Changes, pull before sending, auto-send build errors, font size), Layout (prompt panel position), Terminal type, Theme, Toolbar, CLI Paths, and Backup (save/load all settings to a file)
 
-**☰ Tools dropdown**: Holds *Update Code Agent*, *Restart Code Agent*, *Detach/Attach Terminal*, *View Code Changes*, *Session History*, *Show Usage*, *Set Working Directory...*, *Send Build Errors to Agent*, *Generate Commit Message*, and *Recommend AI Model*. Promote any of these to one-click toolbar buttons — and reorder them by dragging — via *⚙ → Settings... → Toolbar*; promoted features leave the dropdown, which hides once they all become buttons.
+**☰ Tools dropdown**: Holds *Update Code Agent*, *Restart Code Agent*, *Detach/Attach Terminal*, *View Code Changes*, *Session History*, *Set Working Directory...*, *Send Build Errors to Agent*, *Generate Commit Message*, and *Recommend AI Model*. Promote any of these to one-click toolbar buttons — and reorder them by dragging — via *⚙ → Settings... → Toolbar*; promoted features leave the dropdown, which hides once they all become buttons.
 
 **🤖 Model menu**: For Claude — Opus / Sonnet / Haiku, effort level for Opus (Auto / Low / Medium / High / Max), Change Account, Install Caveman plugin. For every other agent — its own models (grouped into submenus when the list is long), *Refresh Models*, and *Choose in the Agent...*.
 
@@ -140,6 +139,10 @@ https://github.com/anthropics/claude-code/issues/41501
 Use native mode to avoid this issue.
 
 ## Version History
+
+### Version 216.0
+- Removed the Claude Usage panel, its inline usage bars, the *Show Usage* button and the Settings → Usage tab; the extension no longer opens or signs in to claude.ai, and Fable is always offered in the model menus.
+- This fork installs under its own extension ID, so it no longer receives updates published for the original extension on the Visual Studio Marketplace.
 
 ### Version 215.0
 - Claude Code model menus and *Recommend AI Model* no longer offer Fable when the Claude usage page shows a zero usage-credits balance, since Fable requires credits; if the balance cannot be read, Fable stays available.

@@ -2187,8 +2187,6 @@ For more details, visit: https://pi.dev";
                 TerminalGroupBox.Header = new System.Windows.Controls.TextBlock { Text = providerName, Opacity = 0.93 };
             }
 
-            UpdateInlineUsagePanelVisibility();
-
             // Swap the configurable features between dedicated toolbar buttons and the "⚙"
             // menu, applying provider constraints (Show Usage and Session History are
             // Claude/Devin-only). It also owns the model button, whose visibility depends on
@@ -2276,7 +2274,6 @@ For more details, visit: https://pi.dev";
             Apply(ToolbarButton.RestartAgent, true, RestartTerminalButton, RestartTerminalMenuItem);
             Apply(ToolbarButton.ViewChanges, true, ViewChangesToolbarButton, ViewChangesMenuItem);
             Apply(ToolbarButton.SessionHistory, true, SessionHistoryToolbarButton, SessionHistoryViewMenuItem);
-            Apply(ToolbarButton.ShowUsage, true, ShowUsageToolbarButton, ShowUsageViewMenuItem);
             Apply(ToolbarButton.SetWorkingDirectory, true, SetWorkingDirectoryToolbarButton, SetWorkingDirectoryMenuItem);
             Apply(ToolbarButton.SendBuildErrors, true, SendBuildErrorsToolbarButton, SendBuildErrorsMenuItem);
             Apply(ToolbarButton.GenerateCommitMessage, true, GenerateCommitMessageToolbarButton, GenerateCommitMessageMenuItem);
@@ -2309,7 +2306,6 @@ For more details, visit: https://pi.dev";
                 IsMenuItemVisible(DetachTerminalMenuItem) ||
                 IsMenuItemVisible(ViewChangesMenuItem) ||
                 IsMenuItemVisible(SessionHistoryViewMenuItem) ||
-                IsMenuItemVisible(ShowUsageViewMenuItem) ||
                 IsMenuItemVisible(SetWorkingDirectoryMenuItem) ||
                 IsMenuItemVisible(SendBuildErrorsMenuItem) ||
                 IsMenuItemVisible(GenerateCommitMessageMenuItem) ||
@@ -2481,7 +2477,7 @@ For more details, visit: https://pi.dev";
         private static readonly ToolbarButton[] DefaultToolbarButtonOrder =
         {
             ToolbarButton.UpdateAgent, ToolbarButton.DetachTerminal, ToolbarButton.RestartAgent,
-            ToolbarButton.ViewChanges, ToolbarButton.SessionHistory, ToolbarButton.ShowUsage,
+            ToolbarButton.ViewChanges, ToolbarButton.SessionHistory,
             ToolbarButton.SetWorkingDirectory, ToolbarButton.SendBuildErrors,
             ToolbarButton.GenerateCommitMessage, ToolbarButton.GenerateCommitMessageAndPush,
             ToolbarButton.RecommendModel
@@ -2516,7 +2512,6 @@ For more details, visit: https://pi.dev";
                 case ToolbarButton.RestartAgent: return RestartTerminalButton;
                 case ToolbarButton.ViewChanges: return ViewChangesToolbarButton;
                 case ToolbarButton.SessionHistory: return SessionHistoryToolbarButton;
-                case ToolbarButton.ShowUsage: return ShowUsageToolbarButton;
                 case ToolbarButton.SetWorkingDirectory: return SetWorkingDirectoryToolbarButton;
                 case ToolbarButton.SendBuildErrors: return SendBuildErrorsToolbarButton;
                 case ToolbarButton.GenerateCommitMessage: return GenerateCommitMessageToolbarButton;
@@ -2535,7 +2530,6 @@ For more details, visit: https://pi.dev";
                 case ToolbarButton.RestartAgent: return RestartTerminalMenuItem;
                 case ToolbarButton.ViewChanges: return ViewChangesMenuItem;
                 case ToolbarButton.SessionHistory: return SessionHistoryViewMenuItem;
-                case ToolbarButton.ShowUsage: return ShowUsageViewMenuItem;
                 case ToolbarButton.SetWorkingDirectory: return SetWorkingDirectoryMenuItem;
                 case ToolbarButton.SendBuildErrors: return SendBuildErrorsMenuItem;
                 case ToolbarButton.GenerateCommitMessage: return GenerateCommitMessageMenuItem;
@@ -3050,7 +3044,6 @@ For more details, visit: https://pi.dev";
 
                     // Update terminal theme immediately
                     UpdateTerminalTheme();
-                    UpdateInlineUsageBarColors();
 
                     // Skip the restart prompt entirely when no terminal is
                     // running, or when the new panel color matches what the
@@ -3178,9 +3171,7 @@ For more details, visit: https://pi.dev";
             bool hasReasoningLevel = isClaude || isCodex;
 
             // Claude-specific items
-            // Fable needs usage credits — hidden on a zero balance unless it is the current pick.
-            bool offerFable = IsFableModelOffered() || _settings?.SelectedClaudeModel == ClaudeModel.Fable;
-            FableMenuItem.Visibility = isClaude && offerFable ? Visibility.Visible : Visibility.Collapsed;
+            FableMenuItem.Visibility = isClaude ? Visibility.Visible : Visibility.Collapsed;
             OpusMenuItem.Visibility = isClaude ? Visibility.Visible : Visibility.Collapsed;
             SonnetMenuItem.Visibility = isClaude ? Visibility.Visible : Visibility.Collapsed;
             HaikuMenuItem.Visibility = isClaude ? Visibility.Visible : Visibility.Collapsed;
@@ -4000,9 +3991,6 @@ For more details, visit: https://pi.dev";
                 // Send /logout command
                 await SendTextToTerminalAsync("/logout");
 
-                // Sign out the embedded usage WebView2 so the new account is picked up
-                await SignOutUsageWindowIfActiveAsync();
-
                 // Wait for logout to complete
                 await Task.Delay(3000);
 
@@ -4234,7 +4222,6 @@ For more details, visit: https://pi.dev";
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            SyncShowUsageMenuCheckState();
             UpdateSetWorkingDirectoryMenuHeader();
             RefreshToolbarLayout();
         }

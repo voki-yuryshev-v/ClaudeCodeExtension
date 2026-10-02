@@ -169,7 +169,7 @@ namespace ClaudeCodeVS
         RestartAgent,
         ViewChanges,
         SessionHistory,
-        ShowUsage,
+        ShowUsage, // retired with the Claude Usage panel; kept so saved toolbar settings keep their values
         SetWorkingDirectory,
         SendBuildErrors,
         GenerateCommitMessage,
@@ -880,25 +880,8 @@ namespace ClaudeCodeVS
         public System.Collections.Generic.Dictionary<string, AgentFinishConfig> ProjectAgentFinish { get; set; }
             = new System.Collections.Generic.Dictionary<string, AgentFinishConfig>(System.StringComparer.OrdinalIgnoreCase);
 
-        /// <summary>
-        /// Auto-refresh interval (seconds) for the Claude usage tool window's
-        /// embedded WebView2. 0 = manual refresh only.
-        /// </summary>
-        public int UsageAutoRefreshSeconds { get; set; } = 0;
 
-        /// <summary>
-        /// Persisted across sessions: true when the user had the Claude usage
-        /// tool window open at last shutdown. Used to auto-reopen it on the
-        /// next solution load.
-        /// </summary>
-        public bool UsageWindowOpened { get; set; } = false;
 
-        /// <summary>
-        /// If true, the inline mini usage bars are shown in the prompt panel
-        /// when usage data has been successfully scraped. Hidden silently
-        /// when scraping fails or the user is not signed in.
-        /// </summary>
-        public bool ShowInlineUsageBars { get; set; } = true;
 
         /// <summary>
         /// User-assigned custom titles for Claude Code sessions, keyed by session UUID
@@ -939,93 +922,5 @@ namespace ClaudeCodeVS
         /// "messages" (most messages first), "title" (custom title A–Z).
         /// </summary>
         public string SessionHistorySortMode { get; set; } = "modified";
-
-        /// <summary>
-        /// Last successfully scraped inline usage payload (JSON serialized
-        /// <see cref="UsageSnapshot"/>). Restored on startup so the bars
-        /// render immediately with stale data while a fresh fetch runs.
-        /// </summary>
-        public string LastUsageJson { get; set; } = "";
-
-        /// <summary>
-        /// Timestamp (UTC ISO 8601) of the last successful usage scrape.
-        /// </summary>
-        public string LastUsageTimestamp { get; set; } = "";
-    }
-
-    /// <summary>
-    /// Inline usage data scraped from claude.ai/settings/usage.
-    /// Labels and reset texts are kept verbatim from the page so the original
-    /// localization (Portuguese, English, etc.) is preserved in the UI.
-    /// </summary>
-    public class UsageSnapshot
-    {
-        /// <summary>"Sessão atual" / "Current session" — verbatim label from claude.ai.</summary>
-        public string SessionLabel { get; set; } = "";
-
-        /// <summary>"Reinicia em 2 h 36 min" / "Resets in ..." — verbatim text from claude.ai.</summary>
-        public string SessionReset { get; set; } = "";
-
-        /// <summary>Session usage percentage (0-100), parsed from aria-valuenow.</summary>
-        public int SessionPercent { get; set; }
-
-        /// <summary>"Todos os modelos" / "All models" — verbatim label from claude.ai.</summary>
-        public string WeeklyLabel { get; set; } = "";
-
-        /// <summary>"Reinicia ter., 20:00" / "Resets ..." — verbatim text from claude.ai.</summary>
-        public string WeeklyReset { get; set; } = "";
-
-        /// <summary>Weekly usage percentage (0-100), parsed from aria-valuenow.</summary>
-        public int WeeklyPercent { get; set; }
-
-        /// <summary>
-        /// true when the page has no weekly meter (usage-based seats with a spend limit only,
-        /// issue #182) — the inline weekly row is hidden. Negative on purpose so snapshots cached
-        /// by older versions (field absent → false) keep showing their weekly row.
-        /// </summary>
-        public bool NoWeeklyLimit { get; set; }
-
-        /// <summary>true when extra-usage billing is enabled and the section was found on the page.</summary>
-        public bool HasExtraUsage { get; set; }
-
-        /// <summary>"R$110.71 spent" — verbatim label from the extra-usage row.</summary>
-        public string ExtraUsageSpent { get; set; } = "";
-
-        /// <summary>"Resets May 1" — verbatim reset text from the extra-usage row.</summary>
-        public string ExtraUsageReset { get; set; } = "";
-
-        /// <summary>Extra usage percentage parsed from the "X% used" text. May exceed 100.</summary>
-        public int ExtraUsagePercent { get; set; }
-
-        /// <summary>
-        /// "R$0" / "$12.50" — verbatim balance from the header of the "Usage credits" section.
-        /// Empty when the section or its amount was not found.
-        /// </summary>
-        public string UsageCreditsBalance { get; set; } = "";
-
-        /// <summary>
-        /// true only when the usage-credits balance was read and is zero. Fable needs credits, so
-        /// it is not offered then; an empty or unreadable balance keeps it offered.
-        /// </summary>
-        public bool HasNoUsageCredits() => IsZeroCreditBalance(UsageCreditsBalance);
-
-        /// <summary>
-        /// true when <paramref name="balance"/> holds at least one digit and every digit is zero
-        /// ("R$0", "$0.00", "0,00 €"). Currency symbols and separators are ignored.
-        /// </summary>
-        public static bool IsZeroCreditBalance(string balance)
-        {
-            if (string.IsNullOrWhiteSpace(balance)) return false;
-
-            bool sawDigit = false;
-            foreach (char c in balance)
-            {
-                if (c < '0' || c > '9') continue;
-                if (c != '0') return false;
-                sawDigit = true;
-            }
-
-            return sawDigit;
-        }
     }
 }

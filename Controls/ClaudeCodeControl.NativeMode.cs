@@ -2970,13 +2970,8 @@ namespace ClaudeCodeVS
         }
 
         /// <summary>
-        /// Feeds the inline usage bars from the agent's own stream instead of the usage page.
-        /// <para>
-        /// The stream says which window is under pressure and when it resets, but never a percentage —
-        /// the fill of each bar still comes from the scraped snapshot. So this refreshes the reset text
-        /// of the matching bar rather than inventing a number, and surfaces a throttling warning in the
-        /// transcript, which the bars cannot express on their own.
-        /// </para>
+        /// Surfaces a throttling warning from the agent's own stream in the transcript. The stream
+        /// says which window is under pressure and when it resets, but never a percentage.
         /// </summary>
         private void ApplyNativeRateLimit(AgentRateLimit rateLimit)
         {
@@ -2994,18 +2989,6 @@ namespace ClaudeCodeVS
                 bool weekly = !string.IsNullOrEmpty(rateLimit.LimitType) &&
                               rateLimit.LimitType.IndexOf("week", StringComparison.OrdinalIgnoreCase) >= 0;
                 string resets = FormatRateLimitReset(rateLimit.ResetsAtUnix);
-
-                if (!string.IsNullOrEmpty(resets))
-                {
-                    if (weekly)
-                    {
-                        if (InlineWeeklyReset != null) InlineWeeklyReset.Text = resets;
-                    }
-                    else
-                    {
-                        if (InlineSessionReset != null) InlineSessionReset.Text = resets;
-                    }
-                }
 
                 string status = rateLimit.Status ?? string.Empty;
                 if (status.Length == 0 || status.Equals("allowed", StringComparison.OrdinalIgnoreCase))

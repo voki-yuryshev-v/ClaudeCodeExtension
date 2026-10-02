@@ -112,7 +112,6 @@ ClaudeCodeExtension/
 │   ├── ClaudeCodeControl.Interop.cs     # Win32 API declarations (P/Invoke)
 │   ├── ClaudeCodeControl.Theme.cs       # Dark/light theme support
 │   ├── ClaudeCodeControl.Detach.cs      # Terminal detach/attach to separate VS tab
-│   ├── ClaudeCodeControl.Usage.cs       # Claude usage tool window wiring & inline bars
 │   ├── ClaudeCodeControl.SessionHistory.cs # Claude/Codex history dialog: list/view/resume/delete
 │   ├── ClaudeCodeControl.NativeMode.cs  # "Native mode": chat instead of the embedded terminal, adapter selection, event bridge
 │   └── ClaudeCodeControl.NativeChat.cs  # Native mode chat tab: document-tab hosting, composer, agent/model/effort/permission selectors, live switching
@@ -131,7 +130,6 @@ ClaudeCodeExtension/
 │   └── PrintModeSession.cs              # Antigravity (--print, no event stream)
 ├── UI/                                  # XAML controls + paired code-behind
 │   ├── ClaudeCodeControl.xaml
-│   ├── ClaudeUsageControl.xaml(.cs)
 │   ├── ChatTranscriptView.xaml(.cs)     # Native mode chat transcript
 │   ├── ChatMessages.cs                  # Chat message view-models
 │   ├── ChatInteractionViewModels.cs     # Question/permission/plan card view-models (transcript rows)
@@ -144,7 +142,6 @@ ClaudeCodeExtension/
 │   ├── ClaudeCodeToolWindow.cs
 │   ├── DiffViewerToolWindow.cs
 │   ├── DetachedTerminalToolWindow.cs
-│   ├── ClaudeUsageToolWindow.cs
 │   └── NativeChatToolWindow.cs          # Document-area tab hosting the native-mode chat
 ├── Models/
 │   ├── ClaudeCodeModels.cs              # Enums & settings class
@@ -224,7 +221,6 @@ Three cross-cutting rules (full text in `docs/ARCHITECTURE.md` → *Cross-Cuttin
 | `Controls/ClaudeCodeControl.ModelCatalog.cs`, `Agents/ModelCatalog.cs` | Model Catalog & Selection — per-CLI listing commands, cache/TTL, how each agent's model is applied |
 | `Controls/ClaudeCodeControl.ModelRecommendation.cs`, `Agents/ModelRecommender.cs` | Recommend AI Model — separate one-shot advisor CLI, lean flags, rubric command-line safety, prompt source/apply target |
 | `Controls/ClaudeCodeControl.TerminalIO.cs` | Terminal I/O — paste/clipboard, chunking, large-prompt-as-file |
-| `Controls/ClaudeCodeControl.Usage.cs` | Claude Usage — WebView2 scraping, persistence, proxy interstitial |
 | `Controls/ClaudeCodeControl.Settings.cs` | Settings — init guard, layout inversion, prompt resize grip |
 | `Controls/ClaudeCodeControl.Workspace.cs` | Workspace — directory resolution priority |
 | `Controls/ClaudeCodeControl.Detach.cs` | Detach — re-parenting / auto-reattach |

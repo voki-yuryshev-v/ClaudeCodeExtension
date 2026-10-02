@@ -350,11 +350,6 @@ namespace ClaudeCodeVS
                 RefreshToolbarLayout();
                 ClearProviderCache();
                 RefreshWatchedAgentFinishConfig();
-
-                UpdateInlineUsagePanelVisibility();
-                if (_usageToolWindow?.IsWindowVisible != true)
-                    StartUsageBackgroundRefreshTimer();
-                _usageToolWindow?.UsageControl?.ApplyAutoRefreshSeconds(_settings.UsageAutoRefreshSeconds);
             }
             catch (Exception ex)
             {

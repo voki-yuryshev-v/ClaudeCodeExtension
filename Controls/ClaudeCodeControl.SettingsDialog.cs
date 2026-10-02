@@ -64,7 +64,7 @@ namespace ClaudeCodeVS
         /// <summary>
         /// Builds and shows the consolidated settings dialog, then applies the
         /// chosen values. The dialog is organized into tabs (Behavior, Layout,
-        /// Terminal, Theme, Usage). Restart-requiring changes (terminal type,
+        /// Terminal, Theme). Restart-requiring changes (terminal type,
         /// theme) trigger a single terminal restart at the end if needed.
         /// </summary>
         private async System.Threading.Tasks.Task ShowConsolidatedSettingsDialogAsync()
@@ -101,10 +101,6 @@ namespace ClaudeCodeVS
             int  origCustomColorArgb          = _settings.CustomThemeColorArgb;
             bool origSkipThemePrompt          = _settings.SkipThemeRestartPrompt;
             string origDefaultNativeColor     = _settings.DefaultNativeSessionColor ?? string.Empty;
-            bool origShowInlineBars           = _settings.ShowInlineUsageBars;
-            // 30s is no longer selectable; a legacy JSON value below 1m floors to it.
-            int  origAutoRefresh              = _settings.UsageAutoRefreshSeconds;
-            if (origAutoRefresh > 0 && origAutoRefresh < 60) origAutoRefresh = 60;
             int  origFontSize                 = (int)Math.Round(PromptTextBox?.FontSize ?? 12.0);
             if (origFontSize < 8) origFontSize = 12;
             if (origFontSize > 24) origFontSize = 24;
@@ -1029,23 +1025,6 @@ namespace ClaudeCodeVS
             nativeRow.Children.Add(nativeResetButton);
             themeStack.Children.Add(nativeRow);
 
-            // ========================= Usage tab =========================
-            var usageStack = AddTab("Usage");
-
-            usageStack.Children.Add(MakeSectionHeader("Usage bars", themeFg));
-            var showBarsCheck = MakeCheckBox(
-                "Show inline usage bars",
-                "Show the mini session/weekly usage bars in the prompt panel. Only applies when a Claude Code provider is active.",
-                origShowInlineBars, themeFg);
-            usageStack.Children.Add(showBarsCheck);
-
-            usageStack.Children.Add(MakeSectionHeader("Auto-refresh", themeFg));
-            var autoRefreshCheck = MakeCheckBox(
-                "Auto-refresh",
-                "Refresh usage data every 1 minute in the background, even while the Claude Usage tab is closed or unfocused. Off refreshes only when the usage window is open or refreshed manually.",
-                origAutoRefresh > 0, themeFg);
-            usageStack.Children.Add(autoRefreshCheck);
-
             // ========================= Toolbar tab =========================
             var toolbarStack = AddTab("Toolbar");
             var toolbarTab = BuildToolbarButtonsTabContent(toolbarStack, themeFg);
@@ -1175,8 +1154,6 @@ namespace ClaudeCodeVS
                 autoRadio.IsChecked = true;               // Automatic theme
                 hexBox.Text = "#F4ECFF";                  // default custom color
                 skipPromptCheck.IsChecked = false;
-                showBarsCheck.IsChecked = true;
-                autoRefreshCheck.IsChecked = false;       // Off
 
                 // CLI Paths tab: default is no custom path (use detection) for every provider,
                 // and no extra launch arguments.
@@ -1291,8 +1268,6 @@ namespace ClaudeCodeVS
                         : hex;
                 }
             }
-            bool newShowInlineBars = showBarsCheck.IsChecked == true;
-            int newAutoRefresh = autoRefreshCheck.IsChecked == true ? 60 : 0;
             var newToolbarOrder = ReadToolbarRowOrder(toolbarRowsPanel);
             var newVisibleToolbarButtons = newToolbarOrder
                 .Where(b => toolbarButtonChecks.TryGetValue(b, out var c) && c.IsChecked == true)
@@ -1368,8 +1343,6 @@ namespace ClaudeCodeVS
             _settings.CustomThemeColorArgb    = newCustomColorArgb;
             _settings.SkipThemeRestartPrompt  = newSkipThemePrompt;
             _settings.DefaultNativeSessionColor = newDefaultNativeColor;
-            _settings.ShowInlineUsageBars    = newShowInlineBars;
-            _settings.UsageAutoRefreshSeconds = newAutoRefresh;
             _settings.PromptFontSize          = newFontSize;
             _settings.VisibleToolbarButtons   = newVisibleToolbarButtons;
             _settings.ToolbarButtonOrder      = newToolbarOrder;
@@ -1434,28 +1407,11 @@ namespace ClaudeCodeVS
             if (themeChanged)
             {
                 UpdateTerminalTheme();
-                UpdateInlineUsageBarColors();
             }
 
             if (!string.Equals(newDefaultNativeColor, origDefaultNativeColor, StringComparison.OrdinalIgnoreCase))
             {
                 RefreshNativeSessionColors();
-            }
-
-            // Usage settings change: refresh inline bars visibility and auto-refresh cadence
-            if (newShowInlineBars != origShowInlineBars || newAutoRefresh != origAutoRefresh)
-            {
-                try
-                {
-                    UpdateInlineUsagePanelVisibility();
-                    if (_usageToolWindow?.IsWindowVisible != true)
-                        StartUsageBackgroundRefreshTimer();
-                    _usageToolWindow?.UsageControl?.ApplyAutoRefreshSeconds(newAutoRefresh);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error applying usage settings change: {ex.Message}");
-                }
             }
 
             SaveSettings();
@@ -1557,7 +1513,6 @@ namespace ClaudeCodeVS
                 case ToolbarButton.RestartAgent: return ("♻️  Restart Code Agent", "Restart the active code agent.");
                 case ToolbarButton.ViewChanges: return ("📄  View Code Changes", "Open the Changes (diff) view. Shown only inside a git repository.");
                 case ToolbarButton.SessionHistory: return ("📜  Session History", "Resume a previous Claude Code or Codex session.");
-                case ToolbarButton.ShowUsage: return ("📊  Show Usage", "Toggle the usage window. Claude / Devin providers only.");
                 case ToolbarButton.SetWorkingDirectory: return ("📁  Set Working Directory", "Set a custom working directory for the agent.");
                 case ToolbarButton.SendBuildErrors: return ("🛠️  Send Build Errors to Agent", "Collect the current build errors and send them to the agent to fix, regardless of the auto-send setting.");
                 case ToolbarButton.GenerateCommitMessage: return ("📝  Generate Commit Message", "Ask the agent to write a commit message from the current git diff and fill it into the Git Changes window. Requires Native Mode.");
